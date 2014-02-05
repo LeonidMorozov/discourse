@@ -1,6 +1,7 @@
 require 'cache'
 require_dependency 'plugin/instance'
 require_dependency 'auth/default_current_user_provider'
+require_dependency 'auth/opened_current_user_provider'
 
 module Discourse
 
@@ -187,7 +188,8 @@ module Discourse
   end
 
   def self.current_user_provider
-    @current_user_provider || Auth::DefaultCurrentUserProvider
+    #@current_user_provider || Auth::DefaultCurrentUserProvider
+    @current_user_provider || Auth::OpenedCurrentUserProvider
   end
 
   def self.current_user_provider=(val)

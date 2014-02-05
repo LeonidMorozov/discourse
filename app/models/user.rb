@@ -299,6 +299,12 @@ class User < ActiveRecord::Base
     end
   end
 
+  def update_auth_token!(token)
+    unless auth_token == token || token.blank?
+      update_column(:auth_token, token)
+    end
+  end
+
   def update_ip_address!(new_ip_address)
     unless ip_address == new_ip_address || new_ip_address.blank?
       update_column(:ip_address, new_ip_address)

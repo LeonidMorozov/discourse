@@ -71,6 +71,7 @@ gem 'redis', :require => ["redis", "redis/connection/hiredis"]
 
 gem 'active_model_serializers'
 
+gem 'rest-client'
 
 gem 'onebox', git: 'https://github.com/dysania/onebox.git'
 
