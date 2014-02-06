@@ -21,7 +21,7 @@ public/plugins/*
 /cache
 /coverage/*
 
-/public/assets/*
+#/public/assets/*
 /bundle/*
 
 config/discourse.pill
