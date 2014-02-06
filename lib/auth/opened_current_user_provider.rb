@@ -52,7 +52,8 @@ class Auth::OpenedCurrentUserProvider
 		headers = {
 				'AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(token)
 		}
-		response = RestClient.get SiteSetting.opened_auth_endpoint, headers
+		url = ENV['opened_auth_endpoint'].present? ? ENV['opened_auth_endpoint'] : 'http://localhost:3001/current_user.json'
+		response = RestClient.get url, headers
 		if response.code == 200
 			JSON.parse(response.to_str)['current_user']
 		else

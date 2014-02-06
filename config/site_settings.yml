@@ -116,7 +116,6 @@ users:
   enable_persona_logins:
     client: true
     default: false
-  opened_auth_endpoint: 'http://localhost:3001/current_user.json'
   enforce_global_nicknames: false
   discourse_org_access_key: ''
   invite_expiry_days: 4
