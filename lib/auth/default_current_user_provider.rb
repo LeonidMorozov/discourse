@@ -1,6 +1,7 @@
 require_dependency "auth/current_user_provider"
 
 class Auth::DefaultCurrentUserProvider
+	include ActionController::HttpAuthentication::Token
 
   CURRENT_USER_KEY ||= "_DISCOURSE_CURRENT_USER"
   API_KEY ||= "_DISCOURSE_API"
@@ -14,6 +15,28 @@ class Auth::DefaultCurrentUserProvider
 
   # our current user, return nil if none is found
   def current_user
+
+		#auth via HttpAuthentication Token
+	  http_auth_request = ActionDispatch::Request.new(@env)
+	  http_auth_token = token_and_options(http_auth_request)
+	  http_auth_token = http_auth_token[0] if http_auth_token.kind_of?(Array) and http_auth_token.any?
+	  if http_auth_token && http_auth_token.length == 32
+		  current_user = User.where(auth_token: auth_token).first
+		  unless current_user
+			  opened_user = get_opened_user auth_token
+			  if opened_user
+				  current_user = User.where(username_lower: opened_user['username'].downcase).first
+				  unless current_user
+					  new_user = User.new username: opened_user['username'], email: opened_user['email']
+					  if new_user.save
+						  current_user = new_user
+					  end
+				  end
+			  end
+		  end
+			return current_user unless current_user.nil?
+	  end
+
     return @env[CURRENT_USER_KEY] if @env.key?(CURRENT_USER_KEY)
 
     request = Rack::Request.new(@env)
@@ -52,6 +75,29 @@ class Auth::DefaultCurrentUserProvider
 
         end
       end
+    end
+
+    unless current_user
+	    request = ActionDispatch::Request.new(@env)
+	    auth_token = token_and_options(request)
+	    auth_token = auth_token[0] if auth_token.kind_of?(Array) and auth_token.any?
+    end
+
+    if auth_token && auth_token.length == 32
+	    current_user = User.where(auth_token: auth_token).first
+	    unless current_user
+		    opened_user = get_opened_user auth_token
+		    if opened_user
+			    current_user = User.where(username_lower: opened_user['username'].downcase).first
+			    unless current_user
+				    new_user = User.new username: opened_user['username'], email: opened_user['email']
+				    if new_user.save
+					    current_user = new_user
+				    end
+			    end
+		    end
+	    end
+	    #current_user.update_auth_token!(auth_token) if current_user
     end
 
     @env[CURRENT_USER_KEY] = current_user
