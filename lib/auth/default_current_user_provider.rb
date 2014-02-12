@@ -17,25 +17,25 @@ class Auth::DefaultCurrentUserProvider
   def current_user
 
 		#auth via HttpAuthentication Token
-	  http_auth_request = ActionDispatch::Request.new(@env)
-	  http_auth_token = token_and_options(http_auth_request)
-	  http_auth_token = http_auth_token[0] if http_auth_token.kind_of?(Array) and http_auth_token.any?
-	  if http_auth_token && http_auth_token.length == 32
-		  current_user = User.where(auth_token: auth_token).first
-		  unless current_user
-			  opened_user = get_opened_user auth_token
-			  if opened_user
-				  current_user = User.where(username_lower: opened_user['username'].downcase).first
-				  unless current_user
-					  new_user = User.new username: opened_user['username'], email: opened_user['email']
-					  if new_user.save
-						  current_user = new_user
-					  end
-				  end
-			  end
-		  end
-			return current_user unless current_user.nil?
-	  end
+		#http_auth_request = ActionDispatch::Request.new(@env)
+		#http_auth_token = token_and_options(http_auth_request)
+		#http_auth_token = http_auth_token[0] if http_auth_token.kind_of?(Array) and http_auth_token.any?
+		#if http_auth_token && http_auth_token.length == 32
+		#  current_user = User.where(auth_token: auth_token).first
+		#  unless current_user
+		#	  opened_user = get_opened_user auth_token
+		#	  if opened_user
+		#		  current_user = User.where(username_lower: opened_user['username'].downcase).first
+		#		  unless current_user
+		#			  new_user = User.new username: opened_user['username'], email: opened_user['email']
+		#			  if new_user.save
+		#				  current_user = new_user
+		#			  end
+		#		  end
+		#	  end
+		#  end
+		#	return current_user unless current_user.nil?
+		#end
 
     return @env[CURRENT_USER_KEY] if @env.key?(CURRENT_USER_KEY)
 
