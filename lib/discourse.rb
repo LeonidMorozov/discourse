@@ -189,7 +189,7 @@ module Discourse
 
   def self.current_user_provider
     @current_user_provider || Auth::DefaultCurrentUserProvider
-    @current_user_provider || Auth::OpenedCurrentUserProvider
+    #@current_user_provider || Auth::OpenedCurrentUserProvider
   end
 
   def self.current_user_provider=(val)
