@@ -37,6 +37,15 @@ class TopicsController < ApplicationController
 
     opts[:username_filters] = [username_filters] if username_filters.is_a?(String)
 
+    if params[:entity_type] and params[:entity_id]
+	    topic = Topic.find_by_entity_type_and_entity_id(params[:entity_type], params[:entity_id])
+	    if topic
+		    params[:topic_id] = topic.id
+	    else
+		    return render json: {msg: 'Not found'}, status: :not_found
+	    end
+    end
+
     begin
       @topic_view = TopicView.new(params[:id] || params[:topic_id], current_user, opts)
     rescue Discourse::NotFound

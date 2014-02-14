@@ -254,6 +254,7 @@ Discourse::Application.routes.draw do
   get 'embed/count' => 'embed#count'
 
   # Topic routes
+  get "comments/:entity_type/:entity_id" => "topics#show", constraints: {entity_id: /\d+/}
   get "t/:slug/:topic_id/wordpress" => "topics#wordpress", constraints: {topic_id: /\d+/}
   get "t/:slug/:topic_id/moderator-liked" => "topics#moderator_liked", constraints: {topic_id: /\d+/}
   get "t/:topic_id/wordpress" => "topics#wordpress", constraints: {topic_id: /\d+/}
