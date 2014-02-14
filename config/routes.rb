@@ -103,15 +103,15 @@ Discourse::Application.routes.draw do
     end
   end # admin namespace
 
-  get "email_preferences" => "email#preferences_redirect", :as => "email_preferences_redirect"
-  get "email/unsubscribe/:key" => "email#unsubscribe", as: "email_unsubscribe"
-  post "email/resubscribe/:key" => "email#resubscribe", as: "email_resubscribe"
+  #get "email_preferences" => "email#preferences_redirect", :as => "email_preferences_redirect"
+  #get "email/unsubscribe/:key" => "email#unsubscribe", as: "email_unsubscribe"
+  #post "email/resubscribe/:key" => "email#resubscribe", as: "email_resubscribe"
 
-  resources :session, id: USERNAME_ROUTE_FORMAT, only: [:create, :destroy] do
-    collection do
-      post "forgot_password"
-    end
-  end
+  #resources :session, id: USERNAME_ROUTE_FORMAT, only: [:create, :destroy] do
+  #  collection do
+  #    post "forgot_password"
+  #  end
+  #end
 
   get "session/csrf" => "session#csrf"
   get "composer-messages" => "composer_messages#index"
@@ -131,33 +131,33 @@ Discourse::Application.routes.draw do
   get "privacy" => "static#show", id: "privacy"
 
   get "users/search/users" => "users#search_users"
-  get "users/password-reset/:token" => "users#password_reset"
-  put "users/password-reset/:token" => "users#password_reset"
-  get "users/activate-account/:token" => "users#activate_account"
-  get "users/authorize-email/:token" => "users#authorize_email"
+  #get "users/password-reset/:token" => "users#password_reset"
+  #put "users/password-reset/:token" => "users#password_reset"
+  #get "users/activate-account/:token" => "users#activate_account"
+  #get "users/authorize-email/:token" => "users#authorize_email"
   get "users/hp" => "users#get_honeypot_value"
 
-  get "user_preferences" => "users#user_preferences_redirect"
-  get "users/:username/private-messages" => "user_actions#private_messages", constraints: {username: USERNAME_ROUTE_FORMAT}
-  get "users/:username/private-messages/:filter" => "user_actions#private_messages", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #get "user_preferences" => "users#user_preferences_redirect"
+  #get "users/:username/private-messages" => "user_actions#private_messages", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #get "users/:username/private-messages/:filter" => "user_actions#private_messages", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username" => "users#show", as: 'userpage', constraints: {username: USERNAME_ROUTE_FORMAT}
-  put "users/:username" => "users#update", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #put "users/:username" => "users#update", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/preferences" => "users#preferences", constraints: {username: USERNAME_ROUTE_FORMAT}, as: :email_preferences
   get "users/:username/preferences/email" => "users#preferences", constraints: {username: USERNAME_ROUTE_FORMAT}
-  put "users/:username/preferences/email" => "users#change_email", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #put "users/:username/preferences/email" => "users#change_email", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/preferences/about-me" => "users#preferences", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/preferences/username" => "users#preferences", constraints: {username: USERNAME_ROUTE_FORMAT}
-  put "users/:username/preferences/username" => "users#username", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #put "users/:username/preferences/username" => "users#username", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/avatar(/:size)" => "users#avatar", constraints: {username: USERNAME_ROUTE_FORMAT} # LEGACY ROUTE
-  post "users/:username/preferences/avatar" => "users#upload_avatar", constraints: {username: USERNAME_ROUTE_FORMAT}
-  put "users/:username/preferences/avatar/toggle" => "users#toggle_avatar", constraints: {username: USERNAME_ROUTE_FORMAT}
-  get "users/:username/invited" => "users#invited", constraints: {username: USERNAME_ROUTE_FORMAT}
-  post "users/:username/send_activation_email" => "users#send_activation_email", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #post "users/:username/preferences/avatar" => "users#upload_avatar", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #put "users/:username/preferences/avatar/toggle" => "users#toggle_avatar", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #get "users/:username/invited" => "users#invited", constraints: {username: USERNAME_ROUTE_FORMAT}
+  #post "users/:username/send_activation_email" => "users#send_activation_email", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/activity" => "users#show", constraints: {username: USERNAME_ROUTE_FORMAT}
   get "users/:username/activity/:filter" => "users#show", constraints: {username: USERNAME_ROUTE_FORMAT}
 
   get "uploads/:site/:id/:sha.:extension" => "uploads#show", constraints: {site: /\w+/, id: /\d+/, sha: /[a-z0-9]{15,16}/i, extension: /\w{2,}/}
-  post "uploads" => "uploads#create"
+  #post "uploads" => "uploads#create"
 
   get "posts/by_number/:topic_id/:post_number" => "posts#by_number"
   get "posts/:id/reply-history" => "posts#reply_history"
@@ -287,8 +287,8 @@ Discourse::Application.routes.draw do
 
   get "raw/:topic_id(/:post_number)" => "posts#markdown"
 
-  resources :invites
-  delete "invites" => "invites#destroy"
+  #resources :invites
+  #delete "invites" => "invites#destroy"
 
   get "onebox" => "onebox#show"
 

@@ -164,7 +164,7 @@ posting:
   allow_uncategorized_topics:
     client: true
     default: true
-  allow_duplicate_topic_titles: false
+  allow_duplicate_topic_titles: true
   min_title_similar_length:
     client: true
     default: 10

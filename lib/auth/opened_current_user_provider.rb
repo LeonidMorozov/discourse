@@ -37,7 +37,7 @@ class Auth::OpenedCurrentUserProvider
 					end
 	      end
 			end
-      current_user.update_auth_token!(auth_token) if current_user
+      current_user.update_custom_auth_token!(auth_token) if current_user
     end
 
     if current_user

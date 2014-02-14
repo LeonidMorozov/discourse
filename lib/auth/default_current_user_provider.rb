@@ -4,6 +4,8 @@ class Auth::DefaultCurrentUserProvider
 	include ActionController::HttpAuthentication::Token
 
   CURRENT_USER_KEY ||= "_DISCOURSE_CURRENT_USER"
+  CUSTOM_CURRENT_USER_KEY ||= "_CUSTOM_DISCOURSE_CURRENT_USER"
+  CUSTOM_CURRENT_USER_HASH_KEY ||= "_CUSTOM_DISCOURSE_CURRENT_USER_HASH"
   API_KEY ||= "_DISCOURSE_API"
   TOKEN_COOKIE ||= "_t"
 
@@ -21,9 +23,10 @@ class Auth::DefaultCurrentUserProvider
 		http_auth_token = token_and_options(http_auth_request)
 		http_auth_token = http_auth_token[0] if http_auth_token.kind_of?(Array) and http_auth_token.any?
 		if http_auth_token && http_auth_token.length == 32
-		  current_user = User.where(auth_token: auth_token).first
+			return @env[CUSTOM_CURRENT_USER_KEY] if @env.key?(CUSTOM_CURRENT_USER_KEY) and @env.key?(CUSTOM_CURRENT_USER_HASH_KEY) and @env[CUSTOM_CURRENT_USER_HASH_KEY] == http_auth_token
+		  current_user = User.where(custom_auth_token: http_auth_token).first
 		  unless current_user
-			  opened_user = get_opened_user auth_token
+			  opened_user = get_opened_user http_auth_token
 			  if opened_user
 				  current_user = User.where(username_lower: opened_user['username'].downcase).first
 				  unless current_user
@@ -32,9 +35,14 @@ class Auth::DefaultCurrentUserProvider
 						  current_user = new_user
 					  end
 				  end
+				  current_user.update_custom_auth_token!(http_auth_token) if current_user
 			  end
 		  end
-			return current_user unless current_user.nil?
+			unless current_user.nil?
+				@env[CUSTOM_CURRENT_USER_KEY] = current_user
+				@env[CUSTOM_CURRENT_USER_HASH_KEY] = http_auth_token
+				return current_user
+			end
 		end
 
     return @env[CURRENT_USER_KEY] if @env.key?(CURRENT_USER_KEY)
@@ -77,31 +85,21 @@ class Auth::DefaultCurrentUserProvider
       end
     end
 
-    unless current_user
-	    request = ActionDispatch::Request.new(@env)
-	    auth_token = token_and_options(request)
-	    auth_token = auth_token[0] if auth_token.kind_of?(Array) and auth_token.any?
-    end
-
-    if auth_token && auth_token.length == 32
-	    current_user = User.where(auth_token: auth_token).first
-	    unless current_user
-		    opened_user = get_opened_user auth_token
-		    if opened_user
-			    current_user = User.where(username_lower: opened_user['username'].downcase).first
-			    unless current_user
-				    new_user = User.new username: opened_user['username'], email: opened_user['email']
-				    if new_user.save
-					    current_user = new_user
-				    end
-			    end
-		    end
-	    end
-	    #current_user.update_auth_token!(auth_token) if current_user
-    end
-
     @env[CURRENT_USER_KEY] = current_user
   end
+
+	def get_opened_user(token)
+		headers = {
+				'AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(token)
+		}
+		url = ENV['opened_auth_endpoint'].present? ? ENV['opened_auth_endpoint'] : 'http://localhost:3001/current_user.json'
+		response = RestClient.get url, headers
+		if response.code == 200
+			JSON.parse(response.to_str)['current_user']
+		else
+			nil
+		end
+	end
 
   def log_on_user(user, session, cookies)
     unless user.auth_token && user.auth_token.length == 32
@@ -130,7 +128,10 @@ class Auth::DefaultCurrentUserProvider
   # api has special rights return true if api was detected
   def is_api?
     current_user
-    @env[API_KEY]
+    res = (@env[API_KEY] or has_auth_token?)
+		puts "has_auth_token?: #{has_auth_token?}"
+		puts "is_api?: #{res}"
+    res
   end
 
   def has_auth_cookie?
@@ -138,4 +139,12 @@ class Auth::DefaultCurrentUserProvider
     cookie = request.cookies[TOKEN_COOKIE]
     !cookie.nil? && cookie.length == 32
   end
+
+	def has_auth_token?
+		http_auth_request = ActionDispatch::Request.new(@env)
+		http_auth_token = token_and_options(http_auth_request)
+		http_auth_token = http_auth_token[0] if http_auth_token.kind_of?(Array) and http_auth_token.any?
+		!http_auth_token.nil? && http_auth_token.length == 32
+	end
+
 end

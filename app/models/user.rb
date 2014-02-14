@@ -299,9 +299,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def update_auth_token!(token)
-    unless auth_token == token || token.blank?
-      update_column(:auth_token, token)
+  def update_custom_auth_token!(token)
+		puts "call update_custom_auth_token!, token: #{token}, custom_auth_token: #{custom_auth_token}"
+    unless custom_auth_token == token || token.blank?
+      update_column(:custom_auth_token, token)
     end
   end
 
