@@ -33,10 +33,8 @@ class PostsController < ApplicationController
 			params[:topic_id] = e2tp.topic_id if e2tp and e2tp.topic_id
 		end
 
-	  puts "call posts.create, params: #{params.inspect}"
     params = create_params
 		params[:topic_id] = e2tp.topic_id if e2tp and e2tp.topic_id
-	  puts "call posts.create, filtered params: #{params.inspect}"
 
     key = params_key(params)
     error_json = nil
@@ -62,7 +60,6 @@ class PostsController < ApplicationController
 
 		if entity_type and entity_id and not e2tp
 			payload_hash = JSON.parse(payload)
-			puts "payload_hash: #{payload_hash.inspect}"
 			e2tm = EntityToTopicMappings.where(entity_type: entity_type, entity_id:entity_id).first_or_create(topic_id: payload_hash['topic_id'])
 			e2tm.save
 		end
