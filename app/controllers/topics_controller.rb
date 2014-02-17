@@ -38,9 +38,9 @@ class TopicsController < ApplicationController
     opts[:username_filters] = [username_filters] if username_filters.is_a?(String)
 
     if params[:entity_type] and params[:entity_id]
-	    topic = Topic.find_by_entity_type_and_entity_id(params[:entity_type], params[:entity_id])
-	    if topic
-		    params[:topic_id] = topic.id
+	    e2tm = EntityToTopicMappings.where(entity_type: params[:entity_type], entity_id: params[:entity_id]).first
+	    if e2tm and e2tm.topic_id
+		    params[:topic_id] = e2tm.topic_id
 	    else
 		    return render json: {msg: 'Not found'}, status: :not_found
 	    end
