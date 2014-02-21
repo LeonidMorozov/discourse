@@ -93,9 +93,9 @@ class Auth::DefaultCurrentUserProvider
 				'AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(token)
 		}
 		url = ENV['OPENED_AUTH_ENDPOINT'].present? ? ENV['OPENED_AUTH_ENDPOINT'] : 'http://localhost:3001/current_user.json'
-		puts "get_opened_user url: #{url}"
+		logger.error "get_opened_user url: #{url}"
 		response = RestClient.get url, headers
-		puts "get_opened_user response: #{response.inspect}"
+		logger.error "get_opened_user response: #{response.inspect}"
 		if response.code == 200
 			JSON.parse(response.to_str)['current_user']
 		else
