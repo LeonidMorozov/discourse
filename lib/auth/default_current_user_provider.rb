@@ -28,7 +28,7 @@ class Auth::DefaultCurrentUserProvider
 		  unless current_user
 			  opened_user = get_opened_user http_auth_token
 			  if opened_user
-				  current_user = User.where(username_lower: opened_user['username'].downcase).first
+				  current_user = User.find_by_email opened_user['email']
 				  unless current_user
 					  new_user = User.new username: opened_user['username'], email: opened_user['email']
 					  if new_user.save
@@ -93,9 +93,9 @@ class Auth::DefaultCurrentUserProvider
 				'AUTHORIZATION' => ActionController::HttpAuthentication::Token.encode_credentials(token)
 		}
 		url = ENV['OPENED_AUTH_ENDPOINT'].present? ? ENV['OPENED_AUTH_ENDPOINT'] : 'http://localhost:3001/current_user.json'
-		logger.error "get_opened_user url: #{url}"
+		puts "get_opened_user url: #{url}"
 		response = RestClient.get url, headers
-		logger.error "get_opened_user response: #{response.inspect}"
+		puts "get_opened_user response: #{response.inspect}"
 		if response.code == 200
 			JSON.parse(response.to_str)['current_user']
 		else
