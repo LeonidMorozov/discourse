@@ -33,6 +33,8 @@ class Auth::DefaultCurrentUserProvider
 					  new_user = User.new username: opened_user['username'], email: opened_user['email']
 					  if new_user.save
 						  current_user = new_user
+					  else
+						  puts "error on create new_user: #{new_user.errors.inspect}"
 					  end
 				  end
 				  current_user.update_custom_auth_token!(http_auth_token) if current_user
