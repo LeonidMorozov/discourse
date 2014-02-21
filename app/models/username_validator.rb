@@ -58,7 +58,7 @@ class UsernameValidator
 
   def username_char_valid?
     return unless errors.empty?
-    if username =~ /[^A-Za-z0-9_]/
+    if username =~ /[^A-Za-z0-9_\.]/
       self.errors << I18n.t(:'user.username.characters')
     end
   end
