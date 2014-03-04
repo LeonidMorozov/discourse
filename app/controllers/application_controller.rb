@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   include CurrentUser
   include CanonicalURL::ControllerExtensions
 
+  before_filter :set_access_control_headers
+
   serialization_scope :guardian
 
   protect_from_forgery
@@ -85,6 +87,15 @@ class ApplicationController < ActionController::Base
 
   rescue_from Discourse::InvalidAccess do
     rescue_discourse_actions("[error: 'invalid access']", 403) # TODO: this breaks json responses
+  end
+
+  def set_access_control_headers
+	  headers['Access-Control-Allow-Origin'] = '*'
+	  headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+	  headers['Access-Control-Expose-Headers'] = 'ETag'
+	  headers['Access-Control-Request-Method'] = 'GET, POST, PUT, DELETE, OPTIONS'
+	  headers['Access-Control-Allow-Headers'] = 'AUTHORIZATION, X-HTTP_AUTHORIZATION, HTTP_AUTHORIZATION, Content-Type'
+	  headers['Access-Control-Max-Age'] = "1728000"
   end
 
   def rescue_discourse_actions(message, error)
