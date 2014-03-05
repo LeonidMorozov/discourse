@@ -302,6 +302,8 @@ Discourse::Application.routes.draw do
   post "draft" => "draft#update"
   delete "draft" => "draft#destroy"
 
+  match '/*path' => 'application#cors_preflight_check', :via => :options
+
   get "robots.txt" => "robots_txt#index"
 
   Discourse.filters.each do |filter|

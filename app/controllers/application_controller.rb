@@ -89,6 +89,12 @@ class ApplicationController < ActionController::Base
     rescue_discourse_actions("[error: 'invalid access']", 403) # TODO: this breaks json responses
   end
 
+  # respond to options requests with blank text/plain as per spec
+  def cors_preflight_check
+	  logger.info ">>> responding to CORS request"
+	  render nothing: true
+  end
+
   def set_access_control_headers
 	  headers['Access-Control-Allow-Origin'] = '*'
 	  headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
