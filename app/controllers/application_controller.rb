@@ -9,8 +9,6 @@ class ApplicationController < ActionController::Base
   include CurrentUser
   include CanonicalURL::ControllerExtensions
 
-  before_filter :set_access_control_headers
-
   serialization_scope :guardian
 
   protect_from_forgery
@@ -20,13 +18,14 @@ class ApplicationController < ActionController::Base
   #  and then raising a CSRF exception
   def handle_unverified_request
     # NOTE: API key is secret, having it invalidates the need for a CSRF token
-    unless is_api?
+    unless is_api? or request.method == 'OPTIONS'
       super
       clear_current_user
       render text: "['BAD CSRF']", status: 403
     end
   end
 
+  before_filter :set_access_control_headers
   before_filter :set_locale
   before_filter :set_mobile_view
   before_filter :inject_preview_style
@@ -87,12 +86,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from Discourse::InvalidAccess do
     rescue_discourse_actions("[error: 'invalid access']", 403) # TODO: this breaks json responses
-  end
-
-  # respond to options requests with blank text/plain as per spec
-  def cors_preflight_check
-	  logger.info ">>> responding to CORS request"
-	  render nothing: true
   end
 
   def set_access_control_headers
