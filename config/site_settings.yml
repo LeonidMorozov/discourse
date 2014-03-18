@@ -8,14 +8,14 @@ required:
   site_contact_username: ''
   logo_url:
     client: true
-    default: '/images/d-logo-sketch.png'
+    default: '/assets/d-logo-sketch-0af4e1534cc416928d9eb56ca7b94f01.png'
   logo_small_url:
     client: true
-    default: '/images/d-logo-sketch-small.png'
+    default: '/assets/d-logo-sketch-small-6f69f99576ffb41dc9713807cb865cc1.png'
   favicon_url:
     client: true
-    default: '/images/default-favicon.ico'
-  apple_touch_icon_url: '/images/default-apple-touch-icon.png'
+    default: '/assets/default-favicon-979a4eac17aa3a6776729482021c9bf9.ico'
+  apple_touch_icon_url: '/assets/default-apple-touch-icon-3f0035fdecf63ba6ca7d7b79809bc4af.png'
   company_full_name: 'My Unconfigured Forum Ltd.'
   company_short_name: 'Unconfigured Forum'
   company_domain: 'www.example.com'
